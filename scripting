@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# scripting - A Script to produce an HTML File with information
+RIGHT_NOW="$(date +"%x %r %Z")"
+
+#Prints basic information text and kernal version and cpu architecture
+basicinfo(){
+	echo "<h1>Basic Information</h1>"
+	echo "<pre>"
+	uname -r 
+ 	echo "</pre>"
+}
+
+#prints memory information in readable form
+memory() {
+	echo "<h1>Memory Info</h1>"
+	echo "<pre>"
+	free -m
+ 	echo "</pre>"
+}
+#prints all disk info
+disk() {
+	echo "<h1>Disk Info</h1>"
+	echo "<pre>"
+	df
+ 	echo "</pre>"
+}
+#prints all users who are in a group
+users() {
+	echo "<h1>Users Info</h1>"
+	echo "<pre>"
+	cat /etc/group | grep '100'
+ 	echo "</pre>"
+}
+#prints ip address if VM
+ip() {
+	echo "<h1>System IP</h1>"
+	echo "<pre>"
+ 	hostname -I
+ 	echo "</pre>"
+}
+#prints out who the report was made by and the time stamp
+report() {
+	echo "<h1>Report Done by $USER at $RIGHT_NOW</h1>"
+}
+#prints a calander
+calander() {
+	echo "<h1>Calander</h1>"
+	echo "<pre>"
+	cal 
+	echo "</pre>"
+}
+#Factors out 60
+fun() {
+	echo "<h1>Factor of 60</h1>"
+	echo "<pre>"
+	factor 60
+	echo "</pre>"
+}
+
+if [ "$EUID" -ne 0 ] 
+	then
+		echo "Must Run as Root"
+	else
+		cat <<-_EOF_ > scripting.html
+		<html>
+		<head>
+			<title>System information for $HOSTNAME</title>
+		</head>
+
+		<body>
+			$(report)
+			$(basicinfo)
+			$(memory)
+			$(disk)
+			$(users)
+			$(ip)
+			$(calander)
+			$(fun)
+					
+		</body>
+		</html>
+		_EOF_
+fi
+
+
